@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="refresh" content="120">
+<meta name="tree-build-id" content="2026-08-02T16:56:14.713+00:00">
 <title>Chris's learning tree</title>
 <style>
 body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -107,7 +107,7 @@ section.unit.lockedunit svg { opacity: 0.55; }
 </div>
 <div class="tree-controls"><span class="tree-hint">drag to pan · scroll to zoom</span><button class="tree-reset" type="button">Reset view</button></div>
 </section>
-<footer>Updated August 02, 2026 at 16:42 &middot; this page refreshes itself every 2 minutes</footer>
+<footer>Updated August 02, 2026 at 16:56 &middot; checks for updates every 5 seconds</footer>
 <script>
 (() => {
   const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
@@ -185,6 +185,47 @@ section.unit.lockedunit svg { opacity: 0.55; }
     };
     if (reset) reset.addEventListener('click', resetView);
     stage.addEventListener('dblclick', resetView);
+  });
+
+  const currentBuild = document.querySelector('meta[name="tree-build-id"]')?.content;
+  const versionUrl = new URL('../version.json', window.location.href);
+  let pollInFlight = false;
+
+  const probeForBuild = async (expectedBuild) => {
+    const probeUrl = new URL(window.location.href);
+    probeUrl.searchParams.set('_tree_probe', Date.now().toString());
+    const response = await fetch(probeUrl, { cache: 'no-store' });
+    if (!response.ok) return;
+    const freshPage = new DOMParser().parseFromString(await response.text(), 'text/html');
+    const availableBuild = freshPage.querySelector('meta[name="tree-build-id"]')?.content;
+    if (availableBuild !== expectedBuild) return;
+
+    const destination = new URL(window.location.href);
+    destination.searchParams.delete('_tree_probe');
+    destination.searchParams.set('_tree_build', expectedBuild);
+    window.location.replace(destination);
+  };
+
+  const checkForUpdate = async () => {
+    if (pollInFlight || document.hidden || !currentBuild) return;
+    pollInFlight = true;
+    try {
+      const requestUrl = new URL(versionUrl);
+      requestUrl.searchParams.set('_tree_check', Date.now().toString());
+      const response = await fetch(requestUrl, { cache: 'no-store' });
+      if (!response.ok) return;
+      const latestBuild = (await response.json()).build;
+      if (latestBuild && latestBuild !== currentBuild) await probeForBuild(latestBuild);
+    } catch (_) {
+      // A missed poll is harmless; the next five-second check tries again.
+    } finally {
+      pollInFlight = false;
+    }
+  };
+
+  window.setInterval(checkForUpdate, 5000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkForUpdate();
   });
 })();
 </script>
