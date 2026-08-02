@@ -4,9 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="tree-build-id" content="2026-08-02T16:56:14.713+00:00">
+<meta name="tree-build-id" content="2026-08-02T17:57:36.257+00:00">
 <title>Jack's learning tree</title>
 <style>
+:root { --completed-fill: #C8E6C9; --completed-stroke: #2E7D32;
+        --completed-text: #1B5E20; --unlocked-fill: #FFE0B2;
+        --unlocked-stroke: #EF6C00; --unlocked-text: #8C4A03;
+        --locked-fill: #ECEFF1; --locked-stroke: #B0BEC5;
+        --locked-text: #78909C; --edge-resting: #B0BEC5;
+        --edge-powered: #37474F; }
 body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
        margin: 0; padding: 0; color: #263238; background: #FAFAF7;
        overflow-x: hidden; scroll-snap-type: y proximity; }
@@ -19,9 +25,9 @@ p.sub { color: #78909C; margin: 0 0 10px; font-size: 13px; }
 .legend { display: flex; gap: 14px; font-size: 13px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
-.dot.completed { background: #C8E6C9; border: 1.5px solid #2E7D32; }
-.dot.unlocked { background: #FFE0B2; border: 1.5px solid #EF6C00; }
-.dot.locked { background: #ECEFF1; border: 1.5px solid #B0BEC5; }
+.dot.completed { background: var(--completed-fill); border: 1.5px solid var(--completed-stroke); }
+.dot.unlocked { background: var(--unlocked-fill); border: 1.5px solid var(--unlocked-stroke); }
+.dot.locked { background: var(--locked-fill); border: 1.5px solid var(--locked-stroke); }
 section.unit { position: relative; width: 100%; height: 100vh; min-height: 480px;
                margin: 0; overflow: hidden; scroll-snap-align: start; }
 section.unit h2 { position: absolute; z-index: 8; top: 22px; left: 50%;
@@ -42,13 +48,22 @@ svg.tree-canvas { display: block; width: 100%; height: 100%; }
               background: rgba(250,250,247,.92); color: #455A64; font: inherit;
               font-size: 12px; padding: 7px 11px; cursor: pointer; }
 .tree-reset:hover { background: #fff; border-color: #78909C; }
-.node.completed ellipse { fill: #C8E6C9; stroke: #2E7D32; }
-.node.completed text { fill: #1B5E20; }
-.node.unlocked ellipse { fill: #FFE0B2; stroke: #EF6C00; }
-.node.unlocked text { fill: #8C4A03; }
-.node.locked ellipse { fill: #ECEFF1; stroke: #B0BEC5; }
-.node.locked text { fill: #78909C; }
-.edge { stroke: #B0BEC5; stroke-width: 1.2; fill: none; }
+.node.completed ellipse { fill: var(--completed-fill); stroke: var(--completed-stroke); }
+.node.completed text { fill: var(--completed-text); }
+.node.unlocked ellipse { fill: var(--unlocked-fill); stroke: var(--unlocked-stroke); }
+.node.unlocked text { fill: var(--unlocked-text); }
+.node.locked ellipse { fill: var(--locked-fill); stroke: var(--locked-stroke); }
+.node.locked text { fill: var(--locked-text); }
+.node .root-progress { font-size: 10px; font-weight: 650; fill: var(--locked-text); }
+.edge { stroke: var(--edge-resting); stroke-width: 1.2; fill: none; }
+.edge.energized { stroke: var(--edge-powered); }
+.motion-overlay { pointer-events: none; transform-box: fill-box; transform-origin: center; }
+.mastery-toast { position: fixed; z-index: 30; left: 50%; bottom: 26px; width: min(620px, calc(100% - 32px));
+                 box-sizing: border-box; padding: 15px 20px; border-radius: 16px;
+                 color: #17351F; background: rgba(232,245,233,.97); border: 1px solid #81C784;
+                 box-shadow: 0 12px 36px rgba(38,50,56,.2); text-align: center;
+                 font-size: 15px; font-weight: 650; opacity: 0; transform: translate(-50%, 12px);
+                 pointer-events: none; }
 footer { position: fixed; z-index: 10; left: 20px; bottom: 16px; color: #90A4AE;
          font-size: 11px; pointer-events: none; }
 section.unit.lockedunit h2 { color: #90A4AE; }
@@ -62,6 +77,9 @@ section.unit.lockedunit svg { opacity: 0.55; }
   .tree-controls { right: 10px; top: 10px; bottom: auto; }
   footer { display: none; }
 }
+@media (prefers-reduced-motion: reduce) {
+  .mastery-toast { transition: none; }
+}
 </style>
 </head>
 <body>
@@ -74,30 +92,30 @@ section.unit.lockedunit svg { opacity: 0.55; }
 <span><span class="dot locked"></span>locked</span>
 </div>
 </div>
-<section class="unit solo">
+<section class="unit solo" data-unit-id="legacy">
 <div class="tree-stage">
 <svg class="tree-canvas" viewBox="0 0 453 406" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Competency tree" data-layout="drawio">
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#B0BEC5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<defs><marker id="arrow-light-939c1909e6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#B0BEC5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-dark-939c1909e6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#37474F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 <g class="tree-viewport">
-<line class="edge" x1="221.9" y1="81.5" x2="124.4" y2="172.4" marker-end="url(#arrow)"/>
-<line class="edge" x1="269.6" y1="82.4" x2="354.4" y2="173.6" marker-end="url(#arrow)"/>
-<line class="edge" x1="122.8" y1="223.8" x2="221.2" y2="322.2" marker-end="url(#arrow)"/>
-<g class="node completed">
+<line class="edge energized" data-source="Addition + 1" data-target="Multiplication + 1" x1="221.9" y1="81.5" x2="124.4" y2="172.4" marker-end="url(#arrow-dark-939c1909e6)"/>
+<line class="edge energized" data-source="Addition + 1" data-target="Addition +- 1" x1="269.6" y1="82.4" x2="354.4" y2="173.6" marker-end="url(#arrow-dark-939c1909e6)"/>
+<line class="edge energized" data-source="Multiplication + 1" data-target="Multiplication +- 1" x1="122.8" y1="223.8" x2="221.2" y2="322.2" marker-end="url(#arrow-dark-939c1909e6)"/>
+<g class="node completed" data-node="Addition + 1" data-state="completed">
 <ellipse cx="247" cy="58" rx="46" ry="28" stroke-width="1.2"/>
 <text x="247" y="50" text-anchor="middle" dominant-baseline="central" font-size="12">Addition</text>
 <text x="247" y="66" text-anchor="middle" dominant-baseline="central" font-size="12">+ 1</text>
 </g>
-<g class="node unlocked">
+<g class="node unlocked" data-node="Addition +- 1" data-state="unlocked">
 <ellipse cx="377" cy="198" rx="46" ry="28" stroke-width="1.2"/>
 <text x="377" y="190" text-anchor="middle" dominant-baseline="central" font-size="12">Addition</text>
 <text x="377" y="206" text-anchor="middle" dominant-baseline="central" font-size="12">+- 1</text>
 </g>
-<g class="node completed">
+<g class="node completed" data-node="Multiplication + 1" data-state="completed">
 <ellipse cx="97" cy="198" rx="67" ry="28" stroke-width="1.2"/>
 <text x="97" y="190" text-anchor="middle" dominant-baseline="central" font-size="12">Multiplication</text>
 <text x="97" y="206" text-anchor="middle" dominant-baseline="central" font-size="12">+ 1</text>
 </g>
-<g class="node unlocked">
+<g class="node unlocked" data-node="Multiplication +- 1" data-state="unlocked">
 <ellipse cx="247" cy="348" rx="67" ry="28" stroke-width="1.2"/>
 <text x="247" y="340" text-anchor="middle" dominant-baseline="central" font-size="12">Multiplication</text>
 <text x="247" y="356" text-anchor="middle" dominant-baseline="central" font-size="12">+- 1</text>
@@ -107,10 +125,51 @@ section.unit.lockedunit svg { opacity: 0.55; }
 </div>
 <div class="tree-controls"><span class="tree-hint">drag to pan · scroll to zoom</span><button class="tree-reset" type="button">Reset view</button></div>
 </section>
-<footer>Updated August 02, 2026 at 16:56 &middot; checks for updates every 5 seconds</footer>
+<footer>Updated August 02, 2026 at 17:57 &middot; checks for updates every 5 seconds</footer>
 <script>
 (() => {
+  // Change these values to retime the whole celebration. Every phase below is derived from them.
+  const TREE_MOTION = Object.freeze({
+    masteryMs: 500,
+    edgeTravelMs: 800,
+    unlockMs: 600,
+    impactMs: 420,
+    toastVisibleMs: 3600,
+  });
+  const TREE_PHASE = Object.freeze({
+    edgeStartMs: TREE_MOTION.masteryMs,
+    arrivalMs: TREE_MOTION.masteryMs + TREE_MOTION.edgeTravelMs,
+    toastStartMs: TREE_MOTION.masteryMs + TREE_MOTION.edgeTravelMs + TREE_MOTION.unlockMs,
+  });
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+  const transitionKey = `tree-transition:${window.location.pathname}`;
+  const windowNamePrefix = `${transitionKey}:`;
+
+  const nodeKey = (node) => {
+    const unit = node.closest('section.unit')?.dataset.unitId || 'legacy';
+    return `${unit}\u241f${node.dataset.node}`;
+  };
+
+  const captureState = () => {
+    const nodes = {};
+    document.querySelectorAll('.node[data-node]').forEach((node) => {
+      nodes[nodeKey(node)] = node.dataset.state;
+    });
+    const snapshot = JSON.stringify({ nodes });
+    try { sessionStorage.setItem(transitionKey, snapshot); } catch (_) {}
+    // window.name is a same-tab fallback for browsers that partition or disable session storage.
+    try { window.name = windowNamePrefix + snapshot; } catch (_) {}
+  };
+
+  const priorState = (() => {
+    try {
+      if (window.name.startsWith(windowNamePrefix)) {
+        return JSON.parse(window.name.slice(windowNamePrefix.length));
+      }
+    } catch (_) {}
+    try { return JSON.parse(sessionStorage.getItem(transitionKey) || 'null'); } catch (_) { return null; }
+  })();
 
   document.querySelectorAll('.tree-stage').forEach((stage) => {
     const svg = stage.querySelector('svg.tree-canvas');
@@ -187,6 +246,147 @@ section.unit.lockedunit svg { opacity: 0.55; }
     stage.addEventListener('dblclick', resetView);
   });
 
+  const cssColor = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const makeEllipse = (base, className, fill, stroke, strokeWidth = '1.2') => {
+    const copy = base.cloneNode(false);
+    copy.removeAttribute('style');
+    copy.setAttribute('class', `motion-overlay ${className}`);
+    copy.setAttribute('fill', fill);
+    copy.setAttribute('stroke', stroke);
+    copy.setAttribute('stroke-width', strokeWidth);
+    return copy;
+  };
+
+  const addEnergyRings = (node, base, outward, delay, duration) => {
+    const rings = [
+      makeEllipse(base, 'energy-ring energy-ring-outer', 'none', '#FFFFFF', '5'),
+      makeEllipse(base, 'energy-ring energy-ring-inner', 'none', '#263238', '1.5'),
+    ];
+    rings.forEach((ring) => {
+      node.insertBefore(ring, node.querySelector('text'));
+      const frames = outward
+        ? [{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(1)', opacity: 1 }]
+        : [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0)', opacity: 1 }];
+      ring.animate(frames, { duration, delay, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'both' })
+        .finished.finally(() => ring.remove());
+    });
+  };
+
+  const animateMastery = (node) => {
+    const base = node.querySelector(':scope > ellipse');
+    if (!base) return;
+    const oldFill = makeEllipse(base, 'mastery-old', cssColor('--unlocked-fill'), cssColor('--unlocked-stroke'));
+    const energy = makeEllipse(base, 'mastery-energy', cssColor('--completed-fill'), cssColor('--completed-stroke'));
+    node.insertBefore(oldFill, node.querySelector('text'));
+    node.insertBefore(energy, node.querySelector('text'));
+    energy.animate([{ transform: 'scale(0)' }, { transform: 'scale(1)' }], {
+      duration: TREE_MOTION.masteryMs, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'both'
+    }).finished.finally(() => { oldFill.remove(); energy.remove(); });
+    addEnergyRings(node, base, true, 0, TREE_MOTION.masteryMs);
+  };
+
+  const animateEdge = (edge) => {
+    const parent = edge.parentNode;
+    const resting = edge.cloneNode(false);
+    const energy = edge.cloneNode(false);
+    [resting, energy].forEach((line) => {
+      line.removeAttribute('marker-end');
+      line.setAttribute('class', 'motion-overlay edge-travel');
+    });
+    resting.setAttribute('stroke', cssColor('--edge-resting'));
+    energy.setAttribute('stroke', cssColor('--edge-powered'));
+    energy.setAttribute('stroke-width', '2.4');
+    parent.insertBefore(resting, edge.nextSibling);
+    parent.insertBefore(energy, resting.nextSibling);
+    const length = energy.getTotalLength();
+    energy.style.strokeDasharray = `${length}`;
+    energy.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
+      duration: TREE_MOTION.edgeTravelMs, delay: TREE_PHASE.edgeStartMs,
+      easing: 'cubic-bezier(.4,0,.2,1)', fill: 'both'
+    }).finished.finally(() => { resting.remove(); energy.remove(); });
+  };
+
+  const animateUnlock = (node) => {
+    const base = node.querySelector(':scope > ellipse');
+    if (!base) return;
+    const cover = makeEllipse(base, 'unlock-cover', cssColor('--locked-fill'), cssColor('--locked-stroke'));
+    node.insertBefore(cover, node.querySelector('text'));
+    cover.animate([{ transform: 'scale(1)' }, { transform: 'scale(0)' }], {
+      duration: TREE_MOTION.unlockMs, delay: TREE_PHASE.arrivalMs,
+      easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'both'
+    }).finished.finally(() => cover.remove());
+    addEnergyRings(node, base, false, TREE_PHASE.arrivalMs, TREE_MOTION.unlockMs);
+  };
+
+  const animateLockedImpact = (node) => {
+    const base = node.querySelector(':scope > ellipse');
+    if (!base) return;
+    const pulse = makeEllipse(base, 'locked-impact', 'none', '#455A64', '2.5');
+    node.insertBefore(pulse, node.querySelector('text'));
+    pulse.animate([
+      { transform: 'scale(1)', opacity: 0 },
+      { transform: 'scale(1.08)', opacity: 1, offset: .35 },
+      { transform: 'scale(1.14)', opacity: 0 },
+    ], { duration: TREE_MOTION.impactMs, delay: TREE_PHASE.arrivalMs, easing: 'ease-out' })
+      .finished.finally(() => pulse.remove());
+  };
+
+  const numberWord = (count) => count === 1 ? 'One' : count === 2 ? 'Two' : String(count);
+  const showCongratulations = (mastered, unlockedCount) => {
+    let message;
+    if (mastered.length === 1) {
+      message = `Congratulations, you have mastered "${mastered[0].dataset.node}".`;
+    } else {
+      message = `Congratulations, you have mastered ${mastered.length} competencies.`;
+    }
+    if (unlockedCount === 1) message += ' One new leaf has been unlocked.';
+    if (unlockedCount > 1) message += ` ${numberWord(unlockedCount)} new leaves have been unlocked.`;
+    const toast = document.createElement('div');
+    toast.className = 'mastery-toast';
+    toast.setAttribute('role', 'status');
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    const delay = reducedMotion ? 0 : TREE_PHASE.toastStartMs;
+    toast.animate([
+      { opacity: 0, transform: 'translate(-50%, 12px)' },
+      { opacity: 1, transform: 'translate(-50%, 0)', offset: .12 },
+      { opacity: 1, transform: 'translate(-50%, 0)', offset: .86 },
+      { opacity: 0, transform: 'translate(-50%, 8px)' },
+    ], { duration: TREE_MOTION.toastVisibleMs, delay, easing: 'ease-out', fill: 'both' })
+      .finished.finally(() => toast.remove());
+  };
+
+  const playProgressTransition = () => {
+    if (!priorState?.nodes) return;
+    const allNodes = [...document.querySelectorAll('.node[data-node]')];
+    const mastered = allNodes.filter((node) =>
+      node.dataset.state === 'completed' && priorState.nodes[nodeKey(node)] !== 'completed');
+    if (!mastered.length) return;
+    const unlocked = allNodes.filter((node) =>
+      node.dataset.state === 'unlocked' && priorState.nodes[nodeKey(node)] === 'locked');
+    if (!reducedMotion) {
+      mastered.forEach(animateMastery);
+      const reachedLocked = new Set();
+      mastered.forEach((node) => {
+        const unit = node.closest('section.unit');
+        [...(unit?.querySelectorAll('.edge[data-source]') || [])]
+          .filter((edge) => edge.dataset.source === node.dataset.node)
+          .forEach((edge) => {
+          animateEdge(edge);
+          const target = [...unit.querySelectorAll('.node[data-node]')]
+            .find((candidate) => candidate.dataset.node === edge.dataset.target);
+          if (target?.dataset.state === 'locked') reachedLocked.add(target);
+        });
+      });
+      unlocked.forEach(animateUnlock);
+      reachedLocked.forEach(animateLockedImpact);
+    }
+    showCongratulations(mastered, unlocked.length);
+  };
+
+  playProgressTransition();
+  captureState();
+
   const currentBuild = document.querySelector('meta[name="tree-build-id"]')?.content;
   const versionUrl = new URL('../version.json', window.location.href);
   let pollInFlight = false;
@@ -203,6 +403,7 @@ section.unit.lockedunit svg { opacity: 0.55; }
     const destination = new URL(window.location.href);
     destination.searchParams.delete('_tree_probe');
     destination.searchParams.set('_tree_build', expectedBuild);
+    captureState();
     window.location.replace(destination);
   };
 
