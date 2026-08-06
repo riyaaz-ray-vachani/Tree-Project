@@ -1,0 +1,33 @@
+{
+  "course": "geometry",
+  "units": [
+    {
+      "id": "01-transformations-and-symmetry",
+      "competencies": [
+        "Adding SDP",
+        "Adding SDN",
+        "Adding SDI",
+        "Translate point w/ vector (A)",
+        "Translate point w/ vector (G)",
+        "Translate point w/ rule (G)",
+        "Translate point w/ rule (A)",
+        "Multiply SDP",
+        "Dilation stretch (A)",
+        "Divide SDP",
+        "Dilation shrink (A)",
+        "Dilation w/ rule (A)",
+        "Scale factor (A)",
+        "Translation vector + rule (A)",
+        "Translation vector + rule (G)",
+        "Multiply SDI",
+        "Reflect across axes (G)",
+        "Reflect across straight lines (G)",
+        "Reflect across straight lines (A)",
+        "Reflect across diagonal lines (G)",
+        "Write reflection rule (A)",
+        "Write reflection rule (G)",
+        "Reflect across axes (A)"
+      ]
+    }
+  ]
+}

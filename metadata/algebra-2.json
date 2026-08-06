@@ -1,0 +1,35 @@
+{
+  "course": "algebra-2",
+  "units": [
+    {
+      "id": "01-functions-and-their-inverses",
+      "competencies": [
+        "Invert table",
+        "Invert graph",
+        "Rewrite ordered pair I",
+        "Rewrite ordered pair II",
+        "Graph to table",
+        "Slope from graph",
+        "Slope from table",
+        "Slope from table (simplified)",
+        "Graph to equation",
+        "Table to equation",
+        "Adding SDP",
+        "Adding SDI",
+        "Multiplying SDP",
+        "Multiply SDI",
+        "Evaluate functions I",
+        "Squares",
+        "Evaluate functions II",
+        "Square roots I",
+        "Square roots II",
+        "Evaluate functions III",
+        "Divide I",
+        "Evaluate inverse I",
+        "Evaluate inverse II",
+        "Divide II",
+        "Invert equation"
+      ]
+    }
+  ]
+}

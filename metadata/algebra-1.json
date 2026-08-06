@@ -1,0 +1,30 @@
+{
+  "course": "algebra-1",
+  "units": [
+    {
+      "id": "01-sequences",
+      "competencies": [
+        "Adding SDP",
+        "Adding SDN",
+        "Multiplying SDP",
+        "Dividing SDP",
+        "Multiplying SDI",
+        "Division SDI",
+        "Division (uneven)",
+        "Adding SDI",
+        "Common difference I",
+        "Type of sequence I",
+        "Common ratio",
+        "Type of sequence II",
+        "Geometric sequence (recursive)",
+        "Arithmetic sequence (recursive)",
+        "Unknown sequence (recursive)",
+        "Generate terms (recursive)",
+        "Generate terms (explicit)",
+        "Common ratio (%)",
+        "Decimal to %",
+        "% to decimal"
+      ]
+    }
+  ]
+}
