@@ -14,9 +14,9 @@
         "Slope from table (simplified)",
         "Graph to equation",
         "Table to equation",
-        "Adding SDP",
-        "Adding SDI",
-        "Multiplying SDP",
+        "Add SDP",
+        "Add SDI",
+        "Multiply SDP",
         "Multiply SDI",
         "Evaluate functions I",
         "Squares",
@@ -29,7 +29,7 @@
         "Evaluate inverse II",
         "Divide II",
         "Invert equation",
-        "Adding SDN"
+        "Add SDN"
       ]
     }
   ]
