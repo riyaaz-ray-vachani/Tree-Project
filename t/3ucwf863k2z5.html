@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="tree-build-id" content="2026-08-09T09:47:23.507+00:00">
+<meta name="tree-build-id" content="2026-08-09T10:14:53.232+00:00">
 <title>Isaac&#x27;s learning tree</title>
 <style>
 :root { --completed-fill: #C8E6C9; --completed-stroke: #2E7D32;
@@ -15,7 +15,25 @@
         --edge-powered: #37474F; }
 body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
        margin: 0; padding: 0; color: #263238; background: #FAFAF7;
+       font-size: calc(16px * var(--tree-text-scale, 1));
        overflow-x: hidden; scroll-snap-type: y proximity; }
+.customize-button { position: fixed; z-index: 25; top: 18px; right: 20px; width: 42px; height: 42px;
+  border: 1px solid #B0BEC5; border-radius: 50%; background: rgba(250,250,247,.92); color: #455A64;
+  font-size: 21px; cursor: pointer; box-shadow: 0 6px 20px rgba(38,50,56,.14); }
+.customize-panel { position: fixed; z-index: 40; top: 0; right: 0; width: min(390px, 92vw); height: 100vh;
+  box-sizing: border-box; padding: 22px; overflow-y: auto; color: #263238; background: rgba(250,250,247,.98);
+  box-shadow: -12px 0 34px rgba(20,25,30,.24); transform: translateX(105%); transition: transform .28s ease; }
+.customize-panel.open { transform: translateX(0); }
+.customize-panel h2 { margin: 0 0 4px; }.customize-panel p { margin: 0 0 16px; color: #607D8B; font-size: 13px; }
+.customize-close { float: right; border: 0; background: transparent; font-size: 24px; cursor: pointer; }
+.setting-group { border: 0; border-top: 1px solid #CFD8DC; margin: 16px 0 0; padding: 14px 0 0; }
+.setting-group legend { font-weight: 700; padding-right: 8px; }
+.setting-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; margin: 10px 0; font-size: 13px; }
+.setting-row input[type="color"] { width: 46px; height: 30px; padding: 1px; border: 1px solid #B0BEC5; border-radius: 7px; }
+.setting-row input[type="range"] { width: 150px; }.setting-row select { max-width: 190px; padding: 6px; }
+.preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.preset-grid button, .restore-defaults { border: 1px solid #B0BEC5; border-radius: 9px; background: white; padding: 8px; cursor: pointer; }
+.restore-defaults { width: 100%; margin-top: 18px; font-weight: 650; }
 .page-hud { position: fixed; z-index: 10; top: 18px; left: 20px; padding: 12px 14px;
             border: 1px solid rgba(176,190,197,.55); border-radius: 14px;
             background: rgba(250,250,247,.88); backdrop-filter: blur(10px);
@@ -48,13 +66,13 @@ svg.tree-canvas { display: block; width: 100%; height: 100%; }
               background: rgba(250,250,247,.92); color: #455A64; font: inherit;
               font-size: 12px; padding: 7px 11px; cursor: pointer; }
 .tree-reset:hover { background: #fff; border-color: #78909C; }
-.node.completed ellipse { fill: var(--completed-fill); stroke: var(--completed-stroke); }
+.node.completed ellipse { fill: var(--completed-fill); fill-opacity: var(--completed-fill-opacity, 1); stroke: var(--completed-stroke); }
 .node.completed text { fill: var(--completed-text); }
-.node.unlocked ellipse { fill: var(--unlocked-fill); stroke: var(--unlocked-stroke); }
+.node.unlocked ellipse { fill: var(--unlocked-fill); fill-opacity: var(--unlocked-fill-opacity, 1); stroke: var(--unlocked-stroke); }
 .node.unlocked text { fill: var(--unlocked-text); }
-.node.locked ellipse { fill: var(--locked-fill); stroke: var(--locked-stroke); }
+.node.locked ellipse { fill: var(--locked-fill); fill-opacity: var(--locked-fill-opacity, 1); stroke: var(--locked-stroke); }
 .node.locked text { fill: var(--locked-text); }
-.node.hidden ellipse { fill: var(--hidden-fill); stroke: var(--hidden-stroke); }
+.node.hidden ellipse { fill: var(--hidden-fill); fill-opacity: var(--hidden-fill-opacity, 1); stroke: var(--hidden-stroke); }
 .node.hidden text { fill: var(--hidden-text); }
 .node, .edge { transition: opacity .42s ease, filter .42s ease; }
 .view-explore .node.locked, .view-explore .node.hidden { opacity: 0; pointer-events: none; }
@@ -83,7 +101,8 @@ svg.tree-canvas { display: block; width: 100%; height: 100%; }
 .mode-toggle { pointer-events: auto; margin-top: 9px; display: flex; gap: 4px; }
 .mode-toggle button { border: 1px solid #B0BEC5; background: transparent; padding: 4px 8px; cursor: pointer; }
 .mode-toggle button.active { background: #455A64; color: white; }
-.node .root-progress { font-size: 10px; font-weight: 650; fill: var(--locked-text); }
+.node .root-progress { font-size: 10px; font-weight: 650; fill: var(--adaptive-text, #000);
+  stroke: var(--adaptive-halo, #fff); stroke-width: 2.5px; paint-order: stroke; }
 .edge { stroke: var(--edge-resting); stroke-width: 1.2; fill: none; }
 .edge.energized { stroke: var(--edge-powered); }
 .motion-overlay { pointer-events: none; transform-box: fill-box; transform-origin: center; }
@@ -112,9 +131,46 @@ section.unit.lockedunit svg { opacity: 0.55; }
   .view-clairvoyant .node.hidden, .clairvoyant-revealing .node.locked,
   .clairvoyant-revealing .node.hidden, .clairvoyant-revealing .tree-stage::after { animation: none; }
 }
-:root{--completed-fill:#C8E6C9;--completed-stroke:#2E7D32;--completed-text:#1B5E20;--unlocked-fill:#FFE0B2;--unlocked-stroke:#EF6C00;--unlocked-text:#8C4A03;--locked-fill:#ECEFF1;--locked-stroke:#B0BEC5;--locked-text:#78909C;--hidden-fill:#E8EAF6;--hidden-stroke:#9FA8DA;--hidden-text:#7986CB;--page-background:#FAFAF7;--clairvoyant-glow:#7E57C2;--clairvoyant-veil:#B39DDB;--clairvoyant-frontier-opacity:0.82;--clairvoyant-hidden-opacity:0.5} body{font-family:-apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;background-color:var(--page-background)}</style>
+:root{--completed-fill:#C8E6C9;--completed-stroke:#2E7D32;--completed-text:#1B5E20;--unlocked-fill:#FFE0B2;--unlocked-stroke:#EF6C00;--unlocked-text:#8C4A03;--locked-fill:#ECEFF1;--locked-stroke:#B0BEC5;--locked-text:#78909C;--hidden-fill:#E8EAF6;--hidden-stroke:#9FA8DA;--hidden-text:#7986CB;--edge-resting:#B0BEC5;--edge-powered:#37474F;--page-background:#FAFAF7;--clairvoyant-glow:#7E57C2;--clairvoyant-veil:#B39DDB;--clairvoyant-frontier-opacity:0.82;--clairvoyant-hidden-opacity:0.5} body{font-family:-apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;background-color:var(--page-background)}</style>
 </head>
 <body class="view-explore">
+<button class="customize-button" type="button" aria-label="Customize tree" title="Customize tree">&#9881;</button>
+<aside class="customize-panel" aria-label="Tree customization">
+<button class="customize-close" type="button" aria-label="Close customization">&times;</button>
+<h2>Make it yours</h2><p>Your choices stay on this Chrome profile.</p>
+<fieldset class="setting-group"><legend>View</legend><div class="mode-toggle"><button data-view-mode="explore">Explore</button><button data-view-mode="clairvoyant">Clairvoyant</button></div></fieldset>
+<fieldset class="setting-group"><legend>Theme presets</legend><div class="preset-grid">
+<button type="button" data-preset="classic">Classic</button><button type="button" data-preset="forest">Forest</button>
+<button type="button" data-preset="midnight">Midnight</button><button type="button" data-preset="ocean">Ocean</button>
+<button type="button" data-preset="violet">Violet</button><button type="button" data-preset="sunset">Sunset</button>
+</div></fieldset>
+<fieldset class="setting-group"><legend>Colors</legend>
+<label class="setting-row">Background <input type="color" data-appearance="background"></label>
+<label class="setting-row">Completed tiles <input type="color" data-appearance="completed"></label>
+<label class="setting-row">Completed opacity <input type="range" min="0.2" max="1" step="0.05" data-appearance="completedOpacity"></label>
+<label class="setting-row">Unlocked tiles <input type="color" data-appearance="unlocked"></label>
+<label class="setting-row">Unlocked opacity <input type="range" min="0.2" max="1" step="0.05" data-appearance="unlockedOpacity"></label>
+<label class="setting-row">Locked tiles <input type="color" data-appearance="locked"></label>
+<label class="setting-row">Locked opacity <input type="range" min="0.2" max="1" step="0.05" data-appearance="lockedOpacity"></label>
+<label class="setting-row">Hidden tiles <input type="color" data-appearance="hidden"></label>
+<label class="setting-row">Hidden opacity <input type="range" min="0.2" max="1" step="0.05" data-appearance="hiddenOpacity"></label>
+<label class="setting-row">Resting arrows <input type="color" data-appearance="resting"></label>
+<label class="setting-row">Powered arrows <input type="color" data-appearance="powered"></label>
+<label class="setting-row">Clairvoyant glow <input type="color" data-appearance="glow"></label>
+</fieldset>
+<fieldset class="setting-group"><legend>Type</legend>
+<label class="setting-row">Font <select data-appearance="font">
+<option value='-apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif'>Course font</option>
+<option value='-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'>Modern</option>
+<option value='Georgia, "Times New Roman", serif'>Classic serif</option>
+<option value='"Trebuchet MS", Arial, sans-serif'>Friendly</option>
+<option value='"Courier New", monospace'>Monospace</option>
+<option value='"Comic Sans MS", cursive'>Playful</option>
+</select></label>
+<label class="setting-row">Text size <input type="range" min="0.8" max="1.35" step="0.05" data-appearance="textScale"></label>
+</fieldset>
+<button class="restore-defaults" type="button">Restore course defaults</button>
+</aside>
 <div class="page-hud">
 <h1>Isaac&#x27;s learning tree</h1>
 <p class="sub">Green is conquered territory. Orange is yours for the taking.</p>
@@ -123,12 +179,11 @@ section.unit.lockedunit svg { opacity: 0.55; }
 <span><span class="dot unlocked"></span>unlocked</span>
 <span><span class="dot locked"></span>locked</span>
 </div>
-<div class="mode-toggle"><button data-view-mode="explore">Explore</button><button data-view-mode="clairvoyant">Clairvoyant</button></div>
 </div>
 <section class="unit solo" data-unit-id="legacy">
 <div class="tree-stage">
 <svg class="tree-canvas" viewBox="0 0 453 406" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Competency tree" data-layout="drawio">
-<defs><marker id="arrow-light-939c1909e6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#B0BEC5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-dark-939c1909e6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#37474F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<defs><marker id="arrow-light-939c1909e6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-dark-939c1909e6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 <g class="tree-viewport">
 <line class="edge energized" data-source="Addition + 1" data-target="Multiplication + 1" data-source-state="completed" data-target-state="unlocked" x1="221.9" y1="81.5" x2="124.4" y2="172.4" marker-end="url(#arrow-dark-939c1909e6)"/>
 <line class="edge energized" data-source="Addition + 1" data-target="Addition +- 1" data-source-state="completed" data-target-state="completed" x1="269.6" y1="82.4" x2="354.4" y2="173.6" marker-end="url(#arrow-dark-939c1909e6)"/>
@@ -158,11 +213,66 @@ section.unit.lockedunit svg { opacity: 0.55; }
 </div>
 <div class="tree-controls"><span class="tree-hint">drag to pan · scroll to zoom</span><button class="tree-reset" type="button">Reset view</button></div>
 </section>
-<footer>Updated August 09, 2026 at 09:47 &middot; checks for updates every 5 seconds</footer>
-<script id="tree-config" type="application/json">{"font": {"family": "-apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"}, "colors": {"completed": {"fill": "#C8E6C9", "stroke": "#2E7D32", "text": "#1B5E20"}, "unlocked": {"fill": "#FFE0B2", "stroke": "#EF6C00", "text": "#8C4A03"}, "locked": {"fill": "#ECEFF1", "stroke": "#B0BEC5", "text": "#78909C"}, "hidden": {"fill": "#E8EAF6", "stroke": "#9FA8DA", "text": "#7986CB"}}, "background": {"color": "#FAFAF7", "image": ""}, "visibility": {"defaultMode": "explore", "allowStudentToggle": true}, "clairvoyant": {"glow": "#7E57C2", "veil": "#B39DDB", "frontierOpacity": 0.82, "hiddenOpacity": 0.5}, "text": {"title": "{student}'s learning tree", "subtitle": "Green is conquered territory. Orange is yours for the taking.", "completed": "completed", "unlocked": "unlocked", "locked": "locked", "explore": "Explore", "clairvoyant": "Clairvoyant", "reset": "Reset view", "hint": "drag to pan \u00b7 scroll to zoom", "unitLocked": "locked"}}</script>
+<footer>Updated August 09, 2026 at 10:14 &middot; checks for updates every 5 seconds</footer>
+<script id="tree-config" type="application/json">{"font": {"family": "-apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"}, "colors": {"completed": {"fill": "#C8E6C9", "stroke": "#2E7D32", "text": "#1B5E20"}, "unlocked": {"fill": "#FFE0B2", "stroke": "#EF6C00", "text": "#8C4A03"}, "locked": {"fill": "#ECEFF1", "stroke": "#B0BEC5", "text": "#78909C"}, "hidden": {"fill": "#E8EAF6", "stroke": "#9FA8DA", "text": "#7986CB"}, "arrows": {"resting": "#B0BEC5", "powered": "#37474F"}}, "background": {"color": "#FAFAF7", "image": ""}, "visibility": {"defaultMode": "explore", "allowStudentToggle": true}, "clairvoyant": {"glow": "#7E57C2", "veil": "#B39DDB", "frontierOpacity": 0.82, "hiddenOpacity": 0.5}, "text": {"title": "{student}'s learning tree", "subtitle": "Green is conquered territory. Orange is yours for the taking.", "completed": "completed", "unlocked": "unlocked", "locked": "locked", "explore": "Explore", "clairvoyant": "Clairvoyant", "reset": "Reset view", "hint": "drag to pan \u00b7 scroll to zoom", "unitLocked": "locked"}}</script>
 <script>
 (() => {
   const pageConfig = JSON.parse(document.getElementById('tree-config').textContent);
+  const appearanceKey = 'tree-appearance-v1';
+  const rootStyle = document.documentElement.style;
+  const PRESETS = {
+    classic: { background: '#FAFAF7', completed: '#C8E6C9', unlocked: '#FFE0B2', locked: '#ECEFF1', hidden: '#E8EAF6', resting: '#B0BEC5', powered: '#37474F', glow: '#7E57C2' },
+    forest: { background: '#F3F7F1', completed: '#A5D6A7', unlocked: '#DCE775', locked: '#CFD8DC', hidden: '#B2DFDB', resting: '#90A4AE', powered: '#2E7D32', glow: '#26A69A' },
+    midnight: { background: '#0F111A', completed: '#66BB6A', unlocked: '#FFB74D', locked: '#546E7A', hidden: '#3949AB', resting: '#607D8B', powered: '#80CBC4', glow: '#B388FF' },
+    ocean: { background: '#EAF7FA', completed: '#80CBC4', unlocked: '#81D4FA', locked: '#B0BEC5', hidden: '#9FA8DA', resting: '#78909C', powered: '#0277BD', glow: '#00ACC1' },
+    violet: { background: '#F7F2FA', completed: '#CE93D8', unlocked: '#B39DDB', locked: '#CFD8DC', hidden: '#9575CD', resting: '#9E9E9E', powered: '#6A1B9A', glow: '#AB47BC' },
+    sunset: { background: '#FFF5EE', completed: '#FFCC80', unlocked: '#FFAB91', locked: '#D7CCC8', hidden: '#CE93D8', resting: '#A1887F', powered: '#D84315', glow: '#EC407A' },
+  };
+  const courseAppearance = {
+    background: pageConfig.background.color,
+    completed: pageConfig.colors.completed.fill, unlocked: pageConfig.colors.unlocked.fill,
+    locked: pageConfig.colors.locked.fill, hidden: pageConfig.colors.hidden.fill,
+    resting: pageConfig.colors.arrows.resting, powered: pageConfig.colors.arrows.powered,
+    glow: pageConfig.clairvoyant.glow, font: pageConfig.font.family, textScale: 1,
+    completedOpacity: 1, unlockedOpacity: 1, lockedOpacity: 1, hiddenOpacity: 1,
+  };
+  const readAppearance = () => {
+    try { return { ...courseAppearance, ...JSON.parse(localStorage.getItem(appearanceKey) || '{}') }; }
+    catch (_) { return { ...courseAppearance }; }
+  };
+  let appearance = readAppearance();
+  const contrastPair = (hex) => {
+    const value = hex.replace('#', '');
+    const channels = [0, 2, 4].map((i) => parseInt(value.slice(i, i + 2), 16) / 255)
+      .map((c) => c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4);
+    const luminance = .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+    return luminance > .179 ? ['#000000', '#FFFFFF'] : ['#FFFFFF', '#000000'];
+  };
+  const applyAppearance = (save = true) => {
+    const variables = {
+      '--page-background': appearance.background, '--completed-fill': appearance.completed,
+      '--unlocked-fill': appearance.unlocked, '--locked-fill': appearance.locked,
+      '--hidden-fill': appearance.hidden, '--edge-resting': appearance.resting,
+      '--edge-powered': appearance.powered, '--clairvoyant-glow': appearance.glow,
+      '--tree-text-scale': appearance.textScale,
+      '--completed-fill-opacity': appearance.completedOpacity,
+      '--unlocked-fill-opacity': appearance.unlockedOpacity,
+      '--locked-fill-opacity': appearance.lockedOpacity,
+      '--hidden-fill-opacity': appearance.hiddenOpacity,
+    };
+    Object.entries(variables).forEach(([name, value]) => rootStyle.setProperty(name, value));
+    document.body.style.fontFamily = appearance.font;
+    document.body.style.backgroundColor = appearance.background;
+    const [text, halo] = contrastPair(appearance.background);
+    rootStyle.setProperty('--adaptive-text', text); rootStyle.setProperty('--adaptive-halo', halo);
+    ['completed', 'unlocked', 'locked', 'hidden'].forEach((state) => {
+      rootStyle.setProperty(`--${state}-text`, contrastPair(appearance[state])[0]);
+    });
+    document.querySelectorAll('[data-appearance]').forEach((input) => {
+      if (appearance[input.dataset.appearance] !== undefined) input.value = appearance[input.dataset.appearance];
+    });
+    if (save) localStorage.setItem(appearanceKey, JSON.stringify(appearance));
+  };
   const modeKey = 'tree-view-mode';
   let mode = localStorage.getItem(modeKey) || pageConfig.visibility.defaultMode;
   if (!['explore', 'clairvoyant'].includes(mode)) mode = 'explore';
@@ -180,6 +290,21 @@ section.unit.lockedunit svg { opacity: 0.55; }
   };
   document.addEventListener('DOMContentLoaded', () => {
     if (pageConfig.background.image) document.body.style.backgroundImage = `url("${pageConfig.background.image}")`;
+    applyAppearance(false);
+    const panel = document.querySelector('.customize-panel');
+    document.querySelector('.customize-button')?.addEventListener('click', () => panel.classList.add('open'));
+    document.querySelector('.customize-close')?.addEventListener('click', () => panel.classList.remove('open'));
+    document.querySelectorAll('[data-appearance]').forEach((input) => input.addEventListener('input', () => {
+      const key = input.dataset.appearance;
+      appearance[key] = input.type === 'range' ? Number(input.value) : input.value;
+      applyAppearance();
+    }));
+    document.querySelectorAll('[data-preset]').forEach((button) => button.addEventListener('click', () => {
+      appearance = { ...appearance, ...PRESETS[button.dataset.preset] }; applyAppearance();
+    }));
+    document.querySelector('.restore-defaults')?.addEventListener('click', () => {
+      appearance = { ...courseAppearance }; localStorage.removeItem(appearanceKey); applyAppearance(false);
+    });
     document.querySelectorAll('[data-view-mode]').forEach((button) =>
       button.addEventListener('click', () => applyMode(button.dataset.viewMode)));
     applyMode(mode, false);
