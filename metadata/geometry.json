@@ -26,7 +26,9 @@
         "Reflect across diagonal lines (G)",
         "Write reflection rule (A)",
         "Write reflection rule (G)",
-        "Reflect across axes (A)"
+        "Reflect across axes (A)",
+        "Dilations stretch (G)",
+        "Dilations shrink (G)"
       ]
     }
   ]
