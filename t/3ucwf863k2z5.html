@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="tree-build-id" content="2026-08-09T09:34:20.042+00:00">
+<meta name="tree-build-id" content="2026-08-09T09:47:23.507+00:00">
 <title>Isaac&#x27;s learning tree</title>
 <style>
 :root { --completed-fill: #C8E6C9; --completed-stroke: #2E7D32;
@@ -56,11 +56,30 @@ svg.tree-canvas { display: block; width: 100%; height: 100%; }
 .node.locked text { fill: var(--locked-text); }
 .node.hidden ellipse { fill: var(--hidden-fill); stroke: var(--hidden-stroke); }
 .node.hidden text { fill: var(--hidden-text); }
+.node, .edge { transition: opacity .42s ease, filter .42s ease; }
 .view-explore .node.locked, .view-explore .node.hidden { opacity: 0; pointer-events: none; }
 .view-explore .edge[data-target-state="hidden"],
 .view-explore .edge[data-source-state="locked"],
 .view-explore .edge[data-source-state="hidden"] { opacity: 0; }
-.view-clairvoyant .node.hidden, .view-clairvoyant .edge[data-target-state="hidden"] { opacity: .58; }
+.view-clairvoyant .node.locked { opacity: var(--clairvoyant-frontier-opacity);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--clairvoyant-glow) 64%, transparent)); }
+.view-clairvoyant .node.hidden { opacity: var(--clairvoyant-hidden-opacity);
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--clairvoyant-glow) 72%, transparent));
+  animation: spectral-breathe 5.5s ease-in-out infinite; }
+.view-clairvoyant .edge[data-source-state="hidden"],
+.view-clairvoyant .edge[data-target-state="hidden"] { opacity: .46; stroke: var(--clairvoyant-glow);
+  stroke-dasharray: 5 6; filter: drop-shadow(0 0 3px var(--clairvoyant-glow)); }
+.tree-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: linear-gradient(105deg, transparent 25%, color-mix(in srgb, var(--clairvoyant-veil) 28%, transparent) 48%, transparent 72%);
+  transform: translateX(-115%); }
+.clairvoyant-revealing .tree-stage::after { animation: lift-the-veil .9s ease-out both; }
+.clairvoyant-revealing .node.locked, .clairvoyant-revealing .node.hidden { animation: realm-reveal .72s ease-out both; }
+@keyframes lift-the-veil { 0% { opacity: 0; transform: translateX(-115%); }
+  35% { opacity: 1; } 100% { opacity: 0; transform: translateX(115%); } }
+@keyframes realm-reveal { from { opacity: 0; filter: blur(5px) drop-shadow(0 0 14px var(--clairvoyant-glow)); }
+  to { filter: blur(0) drop-shadow(0 0 6px var(--clairvoyant-glow)); } }
+@keyframes spectral-breathe { 0%, 100% { filter: drop-shadow(0 0 5px var(--clairvoyant-glow)); }
+  50% { filter: drop-shadow(0 0 9px var(--clairvoyant-glow)); } }
 .mode-toggle { pointer-events: auto; margin-top: 9px; display: flex; gap: 4px; }
 .mode-toggle button { border: 1px solid #B0BEC5; background: transparent; padding: 4px 8px; cursor: pointer; }
 .mode-toggle button.active { background: #455A64; color: white; }
@@ -89,8 +108,11 @@ section.unit.lockedunit svg { opacity: 0.55; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mastery-toast { transition: none; }
+  .node, .edge { transition: none; }
+  .view-clairvoyant .node.hidden, .clairvoyant-revealing .node.locked,
+  .clairvoyant-revealing .node.hidden, .clairvoyant-revealing .tree-stage::after { animation: none; }
 }
-:root{--completed-fill:#C8E6C9;--completed-stroke:#2E7D32;--completed-text:#1B5E20;--unlocked-fill:#FFE0B2;--unlocked-stroke:#EF6C00;--unlocked-text:#8C4A03;--locked-fill:#ECEFF1;--locked-stroke:#B0BEC5;--locked-text:#78909C;--hidden-fill:#E8EAF6;--hidden-stroke:#9FA8DA;--hidden-text:#7986CB;--page-background:#FAFAF7} body{font-family:-apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;background-color:var(--page-background)}</style>
+:root{--completed-fill:#C8E6C9;--completed-stroke:#2E7D32;--completed-text:#1B5E20;--unlocked-fill:#FFE0B2;--unlocked-stroke:#EF6C00;--unlocked-text:#8C4A03;--locked-fill:#ECEFF1;--locked-stroke:#B0BEC5;--locked-text:#78909C;--hidden-fill:#E8EAF6;--hidden-stroke:#9FA8DA;--hidden-text:#7986CB;--page-background:#FAFAF7;--clairvoyant-glow:#7E57C2;--clairvoyant-veil:#B39DDB;--clairvoyant-frontier-opacity:0.82;--clairvoyant-hidden-opacity:0.5} body{font-family:-apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;background-color:var(--page-background)}</style>
 </head>
 <body class="view-explore">
 <div class="page-hud">
@@ -136,25 +158,31 @@ section.unit.lockedunit svg { opacity: 0.55; }
 </div>
 <div class="tree-controls"><span class="tree-hint">drag to pan · scroll to zoom</span><button class="tree-reset" type="button">Reset view</button></div>
 </section>
-<footer>Updated August 09, 2026 at 09:34 &middot; checks for updates every 5 seconds</footer>
-<script id="tree-config" type="application/json">{"font": {"family": "-apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"}, "colors": {"completed": {"fill": "#C8E6C9", "stroke": "#2E7D32", "text": "#1B5E20"}, "unlocked": {"fill": "#FFE0B2", "stroke": "#EF6C00", "text": "#8C4A03"}, "locked": {"fill": "#ECEFF1", "stroke": "#B0BEC5", "text": "#78909C"}, "hidden": {"fill": "#E8EAF6", "stroke": "#9FA8DA", "text": "#7986CB"}}, "background": {"color": "#FAFAF7", "image": ""}, "visibility": {"defaultMode": "explore", "allowStudentToggle": true}, "text": {"title": "{student}'s learning tree", "subtitle": "Green is conquered territory. Orange is yours for the taking.", "completed": "completed", "unlocked": "unlocked", "locked": "locked", "explore": "Explore", "clairvoyant": "Clairvoyant", "reset": "Reset view", "hint": "drag to pan \u00b7 scroll to zoom", "unitLocked": "locked"}}</script>
+<footer>Updated August 09, 2026 at 09:47 &middot; checks for updates every 5 seconds</footer>
+<script id="tree-config" type="application/json">{"font": {"family": "-apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif"}, "colors": {"completed": {"fill": "#C8E6C9", "stroke": "#2E7D32", "text": "#1B5E20"}, "unlocked": {"fill": "#FFE0B2", "stroke": "#EF6C00", "text": "#8C4A03"}, "locked": {"fill": "#ECEFF1", "stroke": "#B0BEC5", "text": "#78909C"}, "hidden": {"fill": "#E8EAF6", "stroke": "#9FA8DA", "text": "#7986CB"}}, "background": {"color": "#FAFAF7", "image": ""}, "visibility": {"defaultMode": "explore", "allowStudentToggle": true}, "clairvoyant": {"glow": "#7E57C2", "veil": "#B39DDB", "frontierOpacity": 0.82, "hiddenOpacity": 0.5}, "text": {"title": "{student}'s learning tree", "subtitle": "Green is conquered territory. Orange is yours for the taking.", "completed": "completed", "unlocked": "unlocked", "locked": "locked", "explore": "Explore", "clairvoyant": "Clairvoyant", "reset": "Reset view", "hint": "drag to pan \u00b7 scroll to zoom", "unitLocked": "locked"}}</script>
 <script>
 (() => {
   const pageConfig = JSON.parse(document.getElementById('tree-config').textContent);
   const modeKey = 'tree-view-mode';
   let mode = localStorage.getItem(modeKey) || pageConfig.visibility.defaultMode;
   if (!['explore', 'clairvoyant'].includes(mode)) mode = 'explore';
-  const applyMode = (next) => {
+  const applyMode = (next, announce = true) => {
+    const changed = mode !== next;
     mode = next; document.body.classList.remove('view-explore', 'view-clairvoyant');
     document.body.classList.add(`view-${mode}`); localStorage.setItem(modeKey, mode);
     document.querySelectorAll('[data-view-mode]').forEach((button) =>
       button.classList.toggle('active', button.dataset.viewMode === mode));
+    if (changed && announce && mode === 'clairvoyant' && !reducedMotion) {
+      document.body.classList.remove('clairvoyant-revealing');
+      requestAnimationFrame(() => document.body.classList.add('clairvoyant-revealing'));
+      window.setTimeout(() => document.body.classList.remove('clairvoyant-revealing'), 1000);
+    }
   };
   document.addEventListener('DOMContentLoaded', () => {
     if (pageConfig.background.image) document.body.style.backgroundImage = `url("${pageConfig.background.image}")`;
     document.querySelectorAll('[data-view-mode]').forEach((button) =>
       button.addEventListener('click', () => applyMode(button.dataset.viewMode)));
-    applyMode(mode);
+    applyMode(mode, false);
   });
   // Change these values to retime the whole celebration. Every phase below is derived from them.
   const TREE_MOTION = Object.freeze({
