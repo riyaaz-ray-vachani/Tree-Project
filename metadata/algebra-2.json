@@ -31,6 +31,34 @@
         "Invert equation",
         "Add SDN"
       ]
+    },
+    {
+      "id": "02-logarithms",
+      "competencies": [
+        "Interpret exponentials",
+        "Interpret exponentials II",
+        "Interpret exponentials III",
+        "Solve linear equations",
+        "Solve exponential equations",
+        "Write exponential table",
+        "Write logarithmic table",
+        "Evaluate exponents I",
+        "Evaluate exponents II",
+        "Evaluate exponents III",
+        "Evaluate exponents IV",
+        "Write exponential equations",
+        "Rewrite exponentials",
+        "Evaluate logarithms I",
+        "Evaluate logarithms II",
+        "Evaluate logarithms III",
+        "Evaluate logarithms IV",
+        "Solve logarithmic equations",
+        "Multiply powers",
+        "Exponentiate powers",
+        "Divide powers",
+        "Powers challenge",
+        "Rewrite logarithms"
+      ]
     }
   ]
 }
